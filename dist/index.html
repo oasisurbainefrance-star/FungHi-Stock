@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>FungHi Stock</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="app-container">
+    <!-- Header Mobile -->
+    <header class="header">
+        <button class="menu-toggle" onclick="ui.toggleSidebar()">☰</button>
+        <div class="logo">FungiStock</div>
+        <button class="btn-add" onclick="ui.showMovementModal()">+</button>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="nav-menu">
+            <div class="nav-item active" data-page="dashboard" onclick="ui.switchPage('dashboard')">
+                📊 Dashboard
+            </div>
+            <div class="nav-item" data-page="movements" onclick="ui.switchPage('movements')">
+                📦 Mouvements
+            </div>
+            <div class="nav-item" data-page="items" onclick="ui.switchPage('items')">
+                📋 Articles
+            </div>
+            <div class="nav-item" data-page="categories" onclick="ui.switchPage('categories')">
+                🏷️ Catégories
+            </div>
+            <div class="nav-item" data-page="suppliers" onclick="ui.switchPage('suppliers')">
+                🏪 Fournisseurs
+            </div>
+            <div class="nav-item" data-page="settings" onclick="ui.switchPage('settings')">
+                ⚙️ Paramètres
+            </div>
+        </div>
+    </nav>
+
+    <!-- Overlay pour fermer la sidebar -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="ui.toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div class="page active" id="dashboard">
+            <h1 class="page-title">Dashboard</h1>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalItems">0</div>
+                    <div class="stat-label">Articles</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalStock">0</div>
+                    <div class="stat-label">Stock total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalValue">0€</div>
+                    <div class="stat-label">Valeur</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="lowStockAlerts">0</div>
+                    <div class="stat-label">Alertes</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Articles en stock bas</h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Article</th>
+                                <th>Stock</th>
+                                <th>Seuil</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lowStockTable">
+                            <tr>
+                                <td colspan="3" class="empty-state">Aucun article en stock bas</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Movements Page -->
+        <div class="page" id="movements">
+            <h1 class="page-title">Mouvements</h1>
+
+            <div class="card">
+                <div class="filters">
+                    <select class="form-select" id="filterType">
+                        <option value="">Tous types</option>
+                        <option value="IN">Entrée</option>
+                        <option value="OUT">Sortie</option>
+                        <option value="USE">Utilisation</option>
+                        <option value="LOST">Perte</option>
+                        <option value="DON">Don</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Article</th>
+                                <th>Qté</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movementsTable">
+                            <tr>
+                                <td colspan="5" class="empty-state">Aucun mouvement trouvé</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="movementsPagination"></div>
+            </div>
+        </div>
+
+        <!-- Items Page -->
+        <div class="page" id="items">
+            <h1 class="page-title">Articles</h1>
+
+            <div class="card">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Stock</th>
+                                <th>Unité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTable">
+                            <tr>
+                                <td colspan="4" class="empty-state">Aucun article trouvé</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <button class="btn-fab" onclick="ui.showItemModal()">+</button>
+        </div>
+
+        <!-- Categories Page -->
+        <div class="page" id="categories">
+            <h1 class="page-title">Catégories</h1>
+
+            <div class="card">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTable">
+                            <tr>
+                                <td colspan="2" class="empty-state">Aucune catégorie trouvée</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <button class="btn-fab" onclick="ui.showCategoryModal()">+</button>
+        </div>
+
+        <!-- Suppliers Page -->
+        <div class="page" id="suppliers">
+            <h1 class="page-title">Fournisseurs</h1>
+
+            <div class="card">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Contact</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="suppliersTable">
+                            <tr>
+                                <td colspan="3" class="empty-state">Aucun fournisseur trouvé</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <button class="btn-fab" onclick="ui.showSupplierModal()">+</button>
+        </div>
+
+        <!-- Settings Page -->
+        <div class="page" id="settings">
+            <h1 class="page-title">Paramètres</h1>
+
+            <div class="card">
+                <h3>Données de démonstration</h3>
+                <p>Remplit la base avec des données d'exemple pour tester l'application</p>
+                <button class="btn" onclick="seedData()">Charger les données de démonstration</button>
+            </div>
+
+            <div class="card">
+                <h3>Sauvegarde</h3>
+                <p>Exporter toutes vos données en format JSON</p>
+                <button class="btn" onclick="storageService.exportData()">Exporter les données</button>
+            </div>
+
+            <div class="card">
+                <h3>À propos</h3>
+                <p>Fungistock V1 - Gestion de stock pour Oasis Urbaine</p>
+                <p style="font-size: 12px; color: #666; margin-top: 8px;">Version mobile optimisée</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modals -->
+<!-- Modal Mouvement -->
+<div class="modal" id="movementModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Ajouter un mouvement</h3>
+            <button class="modal-close" onclick="ui.hideMovementModal()">×</button>
+        </div>
+        <form id="movementForm">
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="datetime-local" class="form-input" id="movementDate" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <select class="form-select" id="movementType" required>
+                    <option value="">Sélectionner</option>
+                    <option value="IN">Entrée</option>
+                    <option value="OUT">Sortie</option>
+                    <option value="USE">Utilisation</option>
+                    <option value="LOST">Perte</option>
+                    <option value="DON">Don</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Article</label>
+                <select class="form-select" id="movementItem" required>
+                    <option value="">Sélectionner</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Fournisseur (optionnel)</label>
+                <select class="form-select" id="movementSupplier">
+                    <option value="">Aucun</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Quantité</label>
+                <input type="number" class="form-input" id="movementQty" step="0.01" required placeholder="ex: 100">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Prix unitaire (optionnel)</label>
+                <input type="number" class="form-input" id="movementPrice" step="0.01" placeholder="ex: 1.50">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Motif / Notes (optionnel)</label>
+                <textarea class="form-textarea" id="movementReason" placeholder="Commande mensuelle, production, etc."></textarea>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="ui.hideMovementModal()">Annuler</button>
+            <button class="btn" onclick="ui.saveMovement()">Enregistrer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Article -->
+<div class="modal" id="itemModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Ajouter un article</h3>
+            <button class="modal-close" onclick="ui.hideItemModal()">×</button>
+        </div>
+        <form id="itemForm">
+            <div class="form-group">
+                <label class="form-label">Nom de l'article</label>
+                <input type="text" class="form-input" id="itemName" required placeholder="ex: Pellets paille bio">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Catégorie</label>
+                <select class="form-select" id="itemCategory" required>
+                    <option value="">Sélectionner une catégorie</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Unité de mesure</label>
+                <input type="text" class="form-input" id="itemUnit" required placeholder="kg, pcs, L, m³...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Seuil d'alerte</label>
+                <input type="number" class="form-input" id="itemThreshold" step="0.01" required placeholder="ex: 50">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Prix unitaire par défaut (optionnel)</label>
+                <input type="number" class="form-input" id="itemPrice" step="0.01" placeholder="ex: 0.85">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notes (optionnel)</label>
+                <textarea class="form-textarea" id="itemNotes" placeholder="Description, informations complémentaires..."></textarea>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="ui.hideItemModal()">Annuler</button>
+            <button class="btn" onclick="ui.saveItem()">Enregistrer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Catégorie -->
+<div class="modal" id="categoryModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Ajouter une catégorie</h3>
+            <button class="modal-close" onclick="ui.hideCategoryModal()">×</button>
+        </div>
+        <form id="categoryForm">
+            <div class="form-group">
+                <label class="form-label">Nom de la catégorie</label>
+                <input type="text" class="form-input" id="categoryName" required placeholder="ex: Pellets paille">
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="ui.hideCategoryModal()">Annuler</button>
+            <button class="btn" onclick="ui.saveCategory()">Enregistrer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Fournisseur -->
+<div class="modal" id="supplierModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Ajouter un fournisseur</h3>
+            <button class="modal-close" onclick="ui.hideSupplierModal()">×</button>
+        </div>
+        <form id="supplierForm">
+            <div class="form-group">
+                <label class="form-label">Nom du fournisseur</label>
+                <input type="text" class="form-input" id="supplierName" required placeholder="ex: Normandie Pellets">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Contact (optionnel)</label>
+                <input type="text" class="form-input" id="supplierContact" placeholder="Téléphone, email, adresse...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notes (optionnel)</label>
+                <textarea class="form-textarea" id="supplierNotes" placeholder="Informations complémentaires..."></textarea>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="ui.hideSupplierModal()">Annuler</button>
+            <button class="btn" onclick="ui.saveSupplier()">Enregistrer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast de notification -->
+<div class="toast" id="toast"></div>
+<!-- partial -->
+  <script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'></script>
+<script src='https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
